@@ -46,7 +46,7 @@ const Navigation = () => {
               <BarChart3 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-foreground">DSS Karyawan</h1>
+              <h1 className="text-lg font-bold text-foreground">SPK Karyawan</h1>
               <p className="text-xs text-muted-foreground">Weighted Point Method</p>
             </div>
           </div>
