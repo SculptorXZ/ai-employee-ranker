@@ -10,6 +10,13 @@ const Home = () => {
 
   const features = [
     {
+      icon: BarChart3,
+      title: 'Dashboard Analytics',
+      description: 'Visualisasi data lengkap dengan grafik dan statistik tim secara real-time.',
+      action: () => navigate('/dashboard'),
+      gradient: 'from-purple-500 to-indigo-500',
+    },
+    {
       icon: Users,
       title: 'Manajemen Karyawan',
       description: 'Kelola data karyawan dengan mudah. Tambah, edit, atau hapus data kapan saja.',
@@ -24,18 +31,11 @@ const Home = () => {
       gradient: 'from-cyan-500 to-teal-500',
     },
     {
-      icon: BarChart3,
-      title: 'Hasil & Ranking',
-      description: 'Lihat hasil perhitungan lengkap dengan ranking dan visualisasi data.',
-      action: () => navigate('/results'),
-      gradient: 'from-teal-500 to-emerald-500',
-    },
-    {
       icon: Sparkles,
       title: 'AI Insights',
       description: 'Dapatkan rekomendasi dan insight otomatis dari AI untuk pengembangan karyawan.',
       action: () => navigate('/results'),
-      gradient: 'from-purple-500 to-pink-500',
+      gradient: 'from-pink-500 to-rose-500',
     },
   ];
 

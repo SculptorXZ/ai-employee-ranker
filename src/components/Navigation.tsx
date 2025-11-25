@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Users, Calculator, BarChart3, RotateCcw } from 'lucide-react';
+import { Home, Users, Calculator, BarChart3, RotateCcw, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useEmployees } from '@/contexts/EmployeeContext';
@@ -31,6 +31,7 @@ const Navigation = () => {
   
   const navItems = [
     { path: '/', label: 'Beranda', icon: Home },
+    { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/employees', label: 'Data Karyawan', icon: Users },
     { path: '/evaluation', label: 'Evaluasi', icon: Calculator },
     { path: '/results', label: 'Hasil', icon: BarChart3 },

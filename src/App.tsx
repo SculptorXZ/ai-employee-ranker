@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { EmployeeProvider } from "./contexts/EmployeeContext";
 import Navigation from "./components/Navigation";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import Employees from "./pages/Employees";
 import Evaluation from "./pages/Evaluation";
 import Results from "./pages/Results";
@@ -23,6 +24,7 @@ const App = () => (
           <Navigation />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/employees" element={<Employees />} />
             <Route path="/evaluation" element={<Evaluation />} />
             <Route path="/results" element={<Results />} />
