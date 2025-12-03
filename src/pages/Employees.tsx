@@ -3,13 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plus, Trash2, AlertCircle } from 'lucide-react';
-import { useEmployees } from '@/contexts/EmployeeContext';
+import { Plus, Trash2, AlertCircle, Pencil, X, Check } from 'lucide-react';
+import { useEmployees, Employee } from '@/contexts/EmployeeContext';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-
 const Employees = () => {
-  const { employees, addEmployee, removeEmployee } = useEmployees();
+  const { employees, addEmployee, removeEmployee, updateEmployee } = useEmployees();
   const { toast } = useToast();
   
   const [formData, setFormData] = useState({
@@ -21,6 +20,9 @@ const Employees = () => {
     initiative: 5,
     loyalty: 5,
   });
+
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editData, setEditData] = useState<Omit<Employee, 'id'> | null>(null);
 
   const criteria = [
     { key: 'discipline', label: 'Kedisiplinan' },
@@ -65,6 +67,42 @@ const Employees = () => {
     toast({
       title: "Berhasil",
       description: `Data ${name} berhasil dihapus`,
+    });
+  };
+
+  const handleEdit = (employee: Employee) => {
+    setEditingId(employee.id);
+    setEditData({
+      name: employee.name,
+      discipline: employee.discipline,
+      productivity: employee.productivity,
+      workQuality: employee.workQuality,
+      teamwork: employee.teamwork,
+      initiative: employee.initiative,
+      loyalty: employee.loyalty,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditData(null);
+  };
+
+  const handleSaveEdit = (id: string) => {
+    if (!editData || !editData.name.trim()) {
+      toast({
+        title: "Error",
+        description: "Nama karyawan harus diisi",
+        variant: "destructive",
+      });
+      return;
+    }
+    updateEmployee(id, editData);
+    setEditingId(null);
+    setEditData(null);
+    toast({
+      title: "Berhasil",
+      description: "Data karyawan berhasil diperbarui",
     });
   };
 
@@ -156,31 +194,95 @@ const Employees = () => {
               {employees.map((employee) => (
                 <Card key={employee.id} className="group hover:shadow-md transition-all">
                   <CardContent className="pt-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-lg text-foreground mb-3">
-                          {employee.name}
-                        </h3>
-                        <div className="grid grid-cols-2 gap-2 text-sm">
+                    {editingId === employee.id && editData ? (
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor={`edit-name-${employee.id}`}>Nama Karyawan</Label>
+                          <Input
+                            id={`edit-name-${employee.id}`}
+                            value={editData.name}
+                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                            className="mt-1"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 gap-3">
                           {criteria.map((criterion) => (
-                            <div key={criterion.key} className="flex justify-between items-center">
-                              <span className="text-muted-foreground">{criterion.label}:</span>
-                              <span className="font-semibold text-primary">
-                                {employee[criterion.key as keyof typeof employee]}
-                              </span>
+                            <div key={criterion.key}>
+                              <Label className="flex justify-between text-sm">
+                                <span>{criterion.label}</span>
+                                <span className="text-primary font-semibold">
+                                  {editData[criterion.key as keyof typeof editData]}
+                                </span>
+                              </Label>
+                              <Input
+                                type="range"
+                                min="1"
+                                max="10"
+                                value={editData[criterion.key as keyof typeof editData] as number}
+                                onChange={(e) => setEditData({ 
+                                  ...editData, 
+                                  [criterion.key]: parseInt(e.target.value)
+                                })}
+                                className="mt-1"
+                              />
                             </div>
                           ))}
                         </div>
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleCancelEdit}
+                          >
+                            <X className="w-4 h-4 mr-1" />
+                            Batal
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => handleSaveEdit(employee.id)}
+                          >
+                            <Check className="w-4 h-4 mr-1" />
+                            Simpan
+                          </Button>
+                        </div>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemove(employee.id, employee.name)}
-                        className="text-destructive hover:text-destructive hover:bg-destructive/10 ml-4"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+                    ) : (
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg text-foreground mb-3">
+                            {employee.name}
+                          </h3>
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            {criteria.map((criterion) => (
+                              <div key={criterion.key} className="flex justify-between items-center">
+                                <span className="text-muted-foreground">{criterion.label}:</span>
+                                <span className="font-semibold text-primary">
+                                  {employee[criterion.key as keyof typeof employee]}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="flex gap-1 ml-4">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEdit(employee)}
+                            className="text-muted-foreground hover:text-primary hover:bg-primary/10"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRemove(employee.id, employee.name)}
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))}
